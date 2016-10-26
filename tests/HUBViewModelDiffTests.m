@@ -240,4 +240,33 @@
     }];
 }
 
+- (void)testInsertionOfNewComponentModelAtStartWithDataChanges
+{
+    NSArray<id<HUBComponentModel>> *firstComponents = @[
+                                                        [self createComponentModelWithIdentifier:@"component-1" index:0 customData:nil],
+                                                        [self createComponentModelWithIdentifier:@"component-2" index:1 customData:nil],
+                                                        [self createComponentModelWithIdentifier:@"component-3" index:2 customData:nil]
+                                                        ];
+    id<HUBViewModel> firstViewModel = [self createViewModelWithIdentifier:@"Test"
+                                                               components:firstComponents];
+    NSArray<id<HUBComponentModel>> *secondComponents = @[
+                                                         [self createComponentModelWithIdentifier:@"component-0" index:0 customData:nil],
+                                                         [self createComponentModelWithIdentifier:@"component-1" index:1 customData:@{@"test": @1}],
+                                                         [self createComponentModelWithIdentifier:@"component-2" index:2 customData:@{@"test": @1}],
+                                                         [self createComponentModelWithIdentifier:@"component-3" index:3 customData:@{@"test": @1}]
+                                                         ];
+    id<HUBViewModel> secondViewModel = [self createViewModelWithIdentifier:@"Test"
+                                                                components:secondComponents];
+
+    HUBViewModelDiff *diff = [HUBViewModelDiff diffFromViewModel:firstViewModel toViewModel:secondViewModel];
+    XCTAssert(diff.reloadedBodyComponentIndexPaths.count == 3);
+    XCTAssert(diff.insertedBodyComponentIndexPaths.count == 1);
+    XCTAssert(diff.deletedBodyComponentIndexPaths.count == 0);
+    XCTAssert([diff.insertedBodyComponentIndexPaths containsObject:[NSIndexPath indexPathForItem:0 inSection:0]]);
+    XCTAssert([diff.reloadedBodyComponentIndexPaths containsObject:[NSIndexPath indexPathForItem:0 inSection:0]]);
+    XCTAssert([diff.reloadedBodyComponentIndexPaths containsObject:[NSIndexPath indexPathForItem:1 inSection:0]]);
+    XCTAssert([diff.reloadedBodyComponentIndexPaths containsObject:[NSIndexPath indexPathForItem:2 inSection:0]]);
+}
+
+
 @end
