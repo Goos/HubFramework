@@ -74,14 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
             [delegate imageLoader:strongSelf didFailLoadingImageForURL:imageURL error:dataError];
             return;
         }
-        
-        if (!CGSizeEqualToSize(image.size, targetSize)) {
-            BOOL const imageIsJPEG = [response.MIMEType isEqualToString:@"image/jpeg"];
-            UIGraphicsBeginImageContextWithOptions(targetSize, imageIsJPEG, image.scale);
-            [image drawInRect:CGRectMake(0, 0, targetSize.width, targetSize.height)];
-            image = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-        }
 
         [delegate imageLoader:strongSelf didLoadImage:image forURL:imageURL];
     }];
